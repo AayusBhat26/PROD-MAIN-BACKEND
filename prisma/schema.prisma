@@ -11,13 +11,33 @@ datasource db {
 }
 
 model User {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  email String @unique
-  name String 
-  profilePicture String @default("")
-  about String @default("")
-  
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  email            String     @unique
+  name             String
+  profilePicture   String     @default("")
+  about            String     @default("")
+  // examples example[]
+  sentMessages     Messages[] @relation("sentMessages")
+  recievedMessages Messages[] @relation("recievedMessages")
 }
+
+model Messages {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  sender        User     @relation("sentMessages", fields: [senderId], references: [id])
+  senderId      String   @db.ObjectId
+  reciever      User     @relation("recievedMessages", fields: [recieverId], references: [id])
+  recieverId    String   @db.ObjectId
+  type          String   @default("text")
+  message       String
+  messageStatus String   @default("sent")
+  createdAt     DateTime @default(now())
+}
+
+// model example{
+//   id String @id @default(auto()) @map("_id") @db.ObjectId
+//   author User @relation(fields: [id], references: [id])
+//   authorid Int
+// }
 // in order make changes in the model, 
 // after making the changes, we need to push the the changes in prisma and prisma would automatically handle the changes, synatx npx prisma db push
 // for prisma studio, 
